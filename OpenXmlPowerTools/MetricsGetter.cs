@@ -166,14 +166,6 @@ namespace OpenXmlPowerTools
             }
         }
 
-        public static int GetTextWidth(System.Drawing.FontFamily ff, System.Drawing.FontStyle fs, decimal sz, string text)
-        {
-            var sixLaborsStyle = fs.HasFlag(System.Drawing.FontStyle.Bold) 
-                ? Nedev.Fonts.FontStyle.Bold 
-                : Nedev.Fonts.FontStyle.Regular;
-            return GetTextWidth(ff.Name, sixLaborsStyle, sz, text);
-        }
-
         private static Uri FixUri(string brokenUri)
         {
             return new Uri("http://broken-link/");

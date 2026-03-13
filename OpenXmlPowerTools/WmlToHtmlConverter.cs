@@ -4,12 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using Nedev.Fonts;
 
 // 200e lrm - LTR
 // 200f rlm - RTL
@@ -120,7 +120,7 @@ namespace OpenXmlPowerTools
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ImageInfo
     {
-        public Bitmap Bitmap;
+        public Nedev.ImageSharp.Image Bitmap;
         public XAttribute ImgStyleAttribute;
         public string ContentType;
         public XElement DrawingElement;
@@ -2248,8 +2248,7 @@ namespace OpenXmlPowerTools
                 if (_knownFamilies == null)
                 {
                     _knownFamilies = new HashSet<string>();
-                    var families = FontFamily.Families;
-                    foreach (var fam in families)
+                    foreach (var fam in SystemFonts.Families)
                         _knownFamilies.Add(fam.Name);
                 }
                 return _knownFamilies;
@@ -2276,15 +2275,10 @@ namespace OpenXmlPowerTools
                 return 0;
 
             // in theory, all unknown fonts are found by the above test, but if not...
-            FontFamily ff;
-            try
-            {
-                ff = new FontFamily(fontName);
-            }
-            catch (ArgumentException)
+            var ff = SystemFonts.Get(fontName);
+            if (ff == default)
             {
                 UnknownFonts.Add(fontName);
-
                 return 0;
             }
 
@@ -2331,7 +2325,7 @@ namespace OpenXmlPowerTools
                 runText = sb.ToString();
             }
 
-            var w = MetricsGetter.GetTextWidth(ff, fs, sz, runText);
+            var w = MetricsGetter.GetTextWidth(fontName, fs, sz, runText);
 
             return (int)(w / 96m * 1440m / multiplier + tabLength * 1440m);
         }
@@ -3079,8 +3073,8 @@ namespace OpenXmlPowerTools
                 return null;
 
             using (var partStream = imagePart.GetStream())
-            using (var bitmap = new Bitmap(partStream))
             {
+                var bitmap = Nedev.ImageSharp.Image.Load(partStream);
                 if (extentCx != null && extentCy != null)
                 {
                     var imageInfo = new ImageInfo()
@@ -3145,29 +3139,27 @@ namespace OpenXmlPowerTools
                 {
                     try
                     {
-                        using (var bitmap = new Bitmap(partStream))
+                        var bitmap = Nedev.ImageSharp.Image.Load(partStream);
+                        var imageInfo = new ImageInfo()
                         {
-                            var imageInfo = new ImageInfo()
-                            {
-                                Bitmap = bitmap,
-                                ContentType = contentType,
-                                DrawingElement = element
-                            };
+                            Bitmap = bitmap,
+                            ContentType = contentType,
+                            DrawingElement = element
+                        };
 
-                            var style = (string)element.Elements(VML.shape).Attributes("style").FirstOrDefault();
-                            if (style == null) return imageHandler(imageInfo);
+                        var style = (string)element.Elements(VML.shape).Attributes("style").FirstOrDefault();
+                        if (style == null) return imageHandler(imageInfo);
 
-                            var tokens = style.Split(';');
-                            var widthInPoints = WidthInPoints(tokens);
-                            var heightInPoints = HeightInPoints(tokens);
-                            if (widthInPoints != null && heightInPoints != null)
-                            {
-                                imageInfo.ImgStyleAttribute = new XAttribute("style",
-                                    string.Format(NumberFormatInfo.InvariantInfo,
-                                        "width: {0}pt; height: {1}pt", widthInPoints, heightInPoints));
-                            }
-                            return imageHandler(imageInfo);
+                        var tokens = style.Split(';');
+                        var widthInPoints = WidthInPoints(tokens);
+                        var heightInPoints = HeightInPoints(tokens);
+                        if (widthInPoints != null && heightInPoints != null)
+                        {
+                            imageInfo.ImgStyleAttribute = new XAttribute("style",
+                                string.Format(NumberFormatInfo.InvariantInfo,
+                                    "width: {0}pt; height: {1}pt", widthInPoints, heightInPoints));
                         }
+                        return imageHandler(imageInfo);
                     }
                     catch (OutOfMemoryException)
                     {

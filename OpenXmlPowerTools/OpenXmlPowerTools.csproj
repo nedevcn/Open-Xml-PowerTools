@@ -9,6 +9,5 @@
     <PackageReference Include="Nedev.Fonts" Version="1.0.0" />
     <PackageReference Include="Nedev.ImageSharp.Drawing" Version="1.0.0" />
     <PackageReference Include="System.IO.Packaging" Version="8.0.1" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.10" />
   </ItemGroup>
 </Project>

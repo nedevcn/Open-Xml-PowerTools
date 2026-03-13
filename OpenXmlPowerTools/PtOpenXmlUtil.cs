@@ -12,9 +12,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Collections.Generic;
 using DocumentFormat.OpenXml.Packaging;
-using System.Drawing;
-using Font = System.Drawing.Font;
-using FontFamily = System.Drawing.FontFamily;
+using Nedev.Fonts;
 
 // ReSharper disable InconsistentNaming
 
@@ -637,8 +635,7 @@ namespace OpenXmlPowerTools
             if (KnownFamilies == null)
             {
                 KnownFamilies = new HashSet<string>();
-                var families = FontFamily.Families;
-                foreach (var fam in families)
+                foreach (var fam in SystemFonts.Families)
                     KnownFamilies.Add(fam.Name);
             }
 
@@ -668,15 +665,10 @@ namespace OpenXmlPowerTools
             if (!KnownFamilies.Contains(fontName))
                 return 0;
             // in theory, all unknown fonts are found by the above test, but if not...
-            FontFamily ff;
-            try
-            {
-                ff = new FontFamily(fontName);
-            }
-            catch (ArgumentException)
+            var ff = SystemFonts.Get(fontName);
+            if (ff == default)
             {
                 UnknownFonts.Add(fontName);
-
                 return 0;
             }
             FontStyle fs = FontStyle.Regular;
@@ -721,7 +713,7 @@ namespace OpenXmlPowerTools
                 runText = sb.ToString();
             }
 
-            var w = MetricsGetter.GetTextWidth(ff, fs, sz, runText);
+            var w = MetricsGetter.GetTextWidth(fontName, fs, sz, runText);
 
             return (int) (w / 96m * 1440m / multiplier + tabLength * 1440m);
         }

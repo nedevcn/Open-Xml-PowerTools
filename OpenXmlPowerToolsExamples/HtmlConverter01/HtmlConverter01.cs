@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 /***************************************************************************
@@ -26,7 +26,6 @@ http://www.microsoft.com/resources/sharedsource/licensingbasics/publiclicense.ms
 ***************************************************************************/
 
 using System;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -34,6 +33,10 @@ using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using OpenXmlPowerTools;
+using Nedev.ImageSharp.Formats.Png;
+using Nedev.ImageSharp.Formats.Gif;
+using Nedev.ImageSharp.Formats.Bmp;
+using Nedev.ImageSharp.Formats.Jpeg;
 
 class HtmlConverterHelper
 {
@@ -99,37 +102,39 @@ class HtmlConverterHelper
                             localDirInfo.Create();
                         ++imageCounter;
                         string extension = imageInfo.ContentType.Split('/')[1].ToLower();
-                        ImageFormat imageFormat = null;
-                        if (extension == "png")
-                            imageFormat = ImageFormat.Png;
-                        else if (extension == "gif")
-                            imageFormat = ImageFormat.Gif;
-                        else if (extension == "bmp")
-                            imageFormat = ImageFormat.Bmp;
-                        else if (extension == "jpeg")
-                            imageFormat = ImageFormat.Jpeg;
-                        else if (extension == "tiff")
-                        {
-                            // Convert tiff to gif.
-                            extension = "gif";
-                            imageFormat = ImageFormat.Gif;
-                        }
-                        else if (extension == "x-wmf")
-                        {
-                            extension = "wmf";
-                            imageFormat = ImageFormat.Wmf;
-                        }
-
-                        // If the image format isn't one that we expect, ignore it,
-                        // and don't return markup for the link.
-                        if (imageFormat == null)
-                            return null;
-
                         string imageFileName = imageDirectoryName + "/image" +
                             imageCounter.ToString() + "." + extension;
                         try
                         {
-                            imageInfo.Bitmap.Save(imageFileName, imageFormat);
+                            switch (extension)
+                            {
+                                case "png":
+                                    using (var fs = new FileStream(imageFileName, FileMode.Create))
+                                        imageInfo.Bitmap.Save(fs, new PngEncoder());
+                                    break;
+                                case "gif":
+                                    using (var fs = new FileStream(imageFileName, FileMode.Create))
+                                        imageInfo.Bitmap.Save(fs, new GifEncoder());
+                                    break;
+                                case "bmp":
+                                    using (var fs = new FileStream(imageFileName, FileMode.Create))
+                                        imageInfo.Bitmap.Save(fs, new BmpEncoder());
+                                    break;
+                                case "jpeg":
+                                case "jpg":
+                                    using (var fs = new FileStream(imageFileName, FileMode.Create))
+                                        imageInfo.Bitmap.Save(fs, new JpegEncoder());
+                                    break;
+                                case "tiff":
+                                    extension = "gif";
+                                    imageFileName = imageDirectoryName + "/image" +
+                                        imageCounter.ToString() + "." + extension;
+                                    using (var fs = new FileStream(imageFileName, FileMode.Create))
+                                        imageInfo.Bitmap.Save(fs, new GifEncoder());
+                                    break;
+                                default:
+                                    return null;
+                            }
                         }
                         catch (System.Runtime.InteropServices.ExternalException)
                         {

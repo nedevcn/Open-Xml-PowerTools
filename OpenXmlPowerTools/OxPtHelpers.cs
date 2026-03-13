@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -14,9 +13,12 @@ using DocumentFormat.OpenXml.Validation;
 using OpenXmlPowerTools;
 using System.Text;
 using DocumentFormat.OpenXml;
-using System.Drawing.Imaging;
 using Nedev.ImageSharp;
 using Nedev.ImageSharp.PixelFormats;
+using Nedev.ImageSharp.Formats.Png;
+using Nedev.ImageSharp.Formats.Gif;
+using Nedev.ImageSharp.Formats.Bmp;
+using Nedev.ImageSharp.Formats.Jpeg;
 
 namespace OpenXmlPowerTools
 {
@@ -378,43 +380,38 @@ AAsACwDBAgAAbCwAAAAA";
                                 localDirInfo.Create();
                             ++imageCounter;
                             string extension = imageInfo.ContentType.Split('/')[1].ToLower();
-                            ImageFormat imageFormat = null;
-                            if (extension == "png")
-                            {
-                                // Convert png to jpeg.
-                                extension = "gif";
-                                imageFormat = ImageFormat.Gif;
-                            }
-                            else if (extension == "gif")
-                                imageFormat = ImageFormat.Gif;
-                            else if (extension == "bmp")
-                                imageFormat = ImageFormat.Bmp;
-                            else if (extension == "jpeg")
-                                imageFormat = ImageFormat.Jpeg;
-                            else if (extension == "tiff")
-                            {
-                                // Convert tiff to gif.
-                                extension = "gif";
-                                imageFormat = ImageFormat.Gif;
-                            }
-                            else if (extension == "x-wmf")
-                            {
-                                extension = "wmf";
-                                imageFormat = ImageFormat.Wmf;
-                            }
-
-                            // If the image format isn't one that we expect, ignore it,
-                            // and don't return markup for the link.
-                            if (imageFormat == null)
-                                return null;
-
                             string imageFileName = imageDirectoryName + "/image" +
                                 imageCounter.ToString() + "." + extension;
                             try
                             {
-                                imageInfo.Bitmap.Save(imageFileName, imageFormat);
+                                switch (extension)
+                                {
+                                    case "png":
+                                        using (var fs = new FileStream(imageFileName, FileMode.Create))
+                                            imageInfo.Bitmap.Save(fs, new PngEncoder());
+                                        break;
+                                    case "gif":
+                                        using (var fs = new FileStream(imageFileName, FileMode.Create))
+                                            imageInfo.Bitmap.Save(fs, new GifEncoder());
+                                        break;
+                                    case "bmp":
+                                        using (var fs = new FileStream(imageFileName, FileMode.Create))
+                                            imageInfo.Bitmap.Save(fs, new BmpEncoder());
+                                        break;
+                                    case "jpeg":
+                                    case "jpg":
+                                        using (var fs = new FileStream(imageFileName, FileMode.Create))
+                                            imageInfo.Bitmap.Save(fs, new JpegEncoder());
+                                        break;
+                                    case "tiff":
+                                        using (var fs = new FileStream(imageFileName, FileMode.Create))
+                                            imageInfo.Bitmap.Save(fs, new GifEncoder());
+                                        break;
+                                    default:
+                                        return null;
+                                }
                             }
-                            catch (System.Runtime.InteropServices.ExternalException)
+                            catch (Exception)
                             {
                                 return null;
                             }
