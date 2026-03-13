@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Xml.Linq;
 using System.Text;
@@ -76,7 +77,6 @@ namespace OpenXmlPowerTools
                 using (PresentationDocument output = streamDoc.GetPresentationDocument())
                 {
                     BuildPresentation(sources, output);
-                    output.Close();
                 }
                 streamDoc.GetModifiedDocument().SaveAs(fileName);
             }
@@ -89,7 +89,6 @@ namespace OpenXmlPowerTools
                 using (PresentationDocument output = streamDoc.GetPresentationDocument())
                 {
                     BuildPresentation(sources, output);
-                    output.Close();
                 }
                 return streamDoc.GetModifiedPmlDocument();
             }
@@ -374,7 +373,7 @@ namespace OpenXmlPowerTools
         {
             XElement newRegular;
             FontPart oldFontPart = (FontPart)sourceDocument.PresentationPart.GetPartById((string)font.Element(fontXName).Attributes(R.id).FirstOrDefault());
-            FontPartType fpt;
+            var fpt = FontPartType.FontData;
             if (oldFontPart.ContentType == "application/x-fontdata")
                 fpt = FontPartType.FontData;
             else if (oldFontPart.ContentType == "application/x-font-ttf")
@@ -687,7 +686,7 @@ namespace OpenXmlPowerTools
                 // dm attribute
                 string relId = diagramReference.Attribute(R.dm).Value;
                 var tempPartIdPair = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (tempPartIdPair != null)
+                if (!string.IsNullOrEmpty(tempPartIdPair.RelationshipId))
                     continue;
 
                 ExternalRelationship tempEr = newContentPart.ExternalRelationships.FirstOrDefault(er => er.Id == relId);
@@ -704,7 +703,7 @@ namespace OpenXmlPowerTools
                 // lo attribute
                 relId = diagramReference.Attribute(R.lo).Value;
                 var tempPartIdPair2 = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (tempPartIdPair2 != null)
+                if (!string.IsNullOrEmpty(tempPartIdPair2.RelationshipId))
                     continue;
 
                 ExternalRelationship tempEr2 = newContentPart.ExternalRelationships.FirstOrDefault(er => er.Id == relId);
@@ -721,7 +720,7 @@ namespace OpenXmlPowerTools
                 // qs attribute
                 relId = diagramReference.Attribute(R.qs).Value;
                 var tempPartIdPair3 = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (tempPartIdPair3 != null)
+                if (!string.IsNullOrEmpty(tempPartIdPair3.RelationshipId))
                     continue;
 
                 ExternalRelationship tempEr3 = newContentPart.ExternalRelationships.FirstOrDefault(er => er.Id == relId);
@@ -738,7 +737,7 @@ namespace OpenXmlPowerTools
                 // cs attribute
                 relId = diagramReference.Attribute(R.cs).Value;
                 var tempPartIdPair4 = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (tempPartIdPair4 != null)
+                if (!string.IsNullOrEmpty(tempPartIdPair4.RelationshipId))
                     continue;
 
                 ExternalRelationship tempEr4 = newContentPart.ExternalRelationships.FirstOrDefault(er => er.Id == relId);
@@ -1073,17 +1072,15 @@ namespace OpenXmlPowerTools
                         var rId = newChart.GetIdOfPart(newPart);
                         dataReference.Attribute(R.id).Value = rId;
 
-                        // following is a hack to fix the package because the Open XML SDK does not let us create
-                        // a relationship from a chart with the oleObject relationship type.
+                        // Replace relationship to use OpenXmlPart APIs (avoids accessing System.IO.Packaging.Package)
+                        var rel = newChart.GetReferenceRelationship(rId);
+                        if (rel != null)
+                        {
+                            newChart.DeleteReferenceRelationship(rId);
+                        }
 
-                        var pkg = newChart.OpenXmlPackage.Package;
-                        var fromPart = pkg.GetParts().FirstOrDefault(p => p.Uri == newChart.Uri);
-                        var rel = fromPart.GetRelationships().FirstOrDefault(p => p.Id == rId);
-                        var targetUri = rel.TargetUri;
-
-                        fromPart.DeleteRelationship(rId);
-                        fromPart.CreateRelationship(targetUri, System.IO.Packaging.TargetMode.Internal,
-                            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject", rId);
+                        // Create new relationship using the new part. The SDK chooses the correct type for EmbeddedPackagePart.
+                        newChart.CreateRelationshipToPart(newPart, rId);
 
                         continue;
                     }
@@ -1321,7 +1318,7 @@ namespace OpenXmlPowerTools
                 }
                 else
                 {
-                    var fromPart = newContentPart.OpenXmlPackage.Package.GetParts().FirstOrDefault(p => p.Uri == newContentPart.Uri);
+                    var fromPart = OpenXmlPackageHelper.GetPackage(newContentPart.OpenXmlPackage).GetParts().FirstOrDefault(p => p.Uri == newContentPart.Uri);
                     fromPart.CreateRelationship(new Uri("NULL", UriKind.RelativeOrAbsolute), System.IO.Packaging.TargetMode.Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image", relId);
                 }
             }
@@ -1727,7 +1724,7 @@ namespace OpenXmlPowerTools
                 }
                 catch (KeyNotFoundException)
                 {
-                    var fromPart = newContentPart.OpenXmlPackage.Package.GetParts().FirstOrDefault(p => p.Uri == newContentPart.Uri);
+                    var fromPart = OpenXmlPackageHelper.GetPackage(newContentPart.OpenXmlPackage).GetParts().FirstOrDefault(p => p.Uri == newContentPart.Uri);
                     fromPart.CreateRelationship(new Uri("NULL", UriKind.RelativeOrAbsolute), System.IO.Packaging.TargetMode.Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image", relId);
                 }
             }

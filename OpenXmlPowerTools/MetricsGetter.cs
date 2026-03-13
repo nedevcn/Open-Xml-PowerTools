@@ -189,11 +189,9 @@ namespace OpenXmlPowerTools
 
         private static XElement RetrieveContentTypeList(OpenXmlPackage oxPkg)
         {
-            Package pkg = oxPkg.Package;
-
-            var nonRelationshipParts = pkg.GetParts().Cast<ZipPackagePart>().Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
-            var contentTypes = nonRelationshipParts
-                .Select(p => p.ContentType)
+            var contentTypes = oxPkg.Parts
+                .Where(p => p.OpenXmlPart.ContentType != "application/vnd.openxmlformats-package.relationships+xml")
+                .Select(p => p.OpenXmlPart.ContentType)
                 .OrderBy(t => t)
                 .Distinct();
             var xe = new XElement(H.ContentTypes,
@@ -203,16 +201,14 @@ namespace OpenXmlPowerTools
 
         private static XElement RetrieveNamespaceList(OpenXmlPackage oxPkg)
         {
-            Package pkg = oxPkg.Package;
-
-            var nonRelationshipParts = pkg.GetParts().Cast<ZipPackagePart>().Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
-            var xmlParts = nonRelationshipParts
-                .Where(p => p.ContentType.ToLower().EndsWith("xml"));
+            var xmlParts = oxPkg.Parts
+                .Where(p => p.OpenXmlPart.ContentType != "application/vnd.openxmlformats-package.relationships+xml")
+                .Where(p => p.OpenXmlPart.ContentType.ToLower().EndsWith("xml"));
 
             var uniqueNamespaces = new HashSet<string>();
             foreach (var xp in xmlParts)
             {
-                using (Stream st = xp.GetStream())
+                using (Stream st = xp.OpenXmlPart.GetStream())
                 {
                     try
                     {
@@ -226,7 +222,7 @@ namespace OpenXmlPowerTools
                             .Distinct()
                             .ToList();
                         foreach (var item in namespaces)
-		                    uniqueNamespaces.Add(item);
+                            uniqueNamespaces.Add(item);
                     }
                     // if catch exception, forget about it.  Just trying to get a most complete survey possible of all namespaces in all documents.
                     // if caught exception, chances are the document is bad anyway.

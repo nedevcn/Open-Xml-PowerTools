@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -7,12 +7,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace OpenXmlPowerTools
 {
@@ -1421,5 +1423,21 @@ namespace OpenXmlPowerTools
 
         public static XName schemaLocation = xsi + "schemaLocation";
         public static XName noNamespaceSchemaLocation = xsi + "noNamespaceSchemaLocation";
+    }
+
+    public static class OpenXmlPackageHelper
+    {
+        private static readonly System.Reflection.PropertyInfo? PackageProperty;
+
+        static OpenXmlPackageHelper()
+        {
+            var openXmlPackageType = typeof(DocumentFormat.OpenXml.Packaging.OpenXmlPackage);
+            PackageProperty = openXmlPackageType.GetProperty("Package", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+        }
+
+        public static Package? GetPackage(DocumentFormat.OpenXml.Packaging.OpenXmlPackage openXmlPackage)
+        {
+            return PackageProperty?.GetValue(openXmlPackage) as Package;
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 // TODO Line 1202 there are inefficient calls to PutXDocument() for footnotes and endnotes
@@ -1338,8 +1338,8 @@ namespace OpenXmlPowerTools
             ConsolidationInfo consolidationInfo,
             WmlComparerSettings settings)
         {
-            Package packageOfDeletedContent = wDocDelta.MainDocumentPart.OpenXmlPackage.Package;
-            Package packageOfNewContent = consolidatedWDoc.MainDocumentPart.OpenXmlPackage.Package;
+            Package packageOfDeletedContent = OpenXmlPackageHelper.GetPackage(wDocDelta.MainDocumentPart.OpenXmlPackage);
+            Package packageOfNewContent = OpenXmlPackageHelper.GetPackage(consolidatedWDoc.MainDocumentPart.OpenXmlPackage);
             PackagePart partInDeletedDocument = packageOfDeletedContent.GetPart(wDocDelta.MainDocumentPart.Uri);
             PackagePart partInNewDocument = packageOfNewContent.GetPart(consolidatedWDoc.MainDocumentPart.Uri);
             consolidationInfo.RevisionElement = MoveRelatedPartsToDestination(partInDeletedDocument, partInNewDocument, consolidationInfo.RevisionElement);
@@ -4605,8 +4605,8 @@ namespace OpenXmlPowerTools
                                         var openXmlPartInNewDocument = part;
                                         return gc.Select(gce =>
                                         {
-                                            Package packageOfDeletedContent = openXmlPartOfDeletedContent.OpenXmlPackage.Package;
-                                            Package packageOfNewContent = openXmlPartInNewDocument.OpenXmlPackage.Package;
+                                            Package packageOfDeletedContent = OpenXmlPackageHelper.GetPackage(openXmlPartOfDeletedContent.OpenXmlPackage);
+                                            Package packageOfNewContent = OpenXmlPackageHelper.GetPackage(openXmlPartInNewDocument.OpenXmlPackage);
                                             PackagePart partInDeletedDocument = packageOfDeletedContent.GetPart(part.Uri);
                                             PackagePart partInNewDocument = packageOfNewContent.GetPart(part.Uri);
                                             return MoveRelatedPartsToDestination(partInDeletedDocument, partInNewDocument, newDrawing);
@@ -4624,8 +4624,8 @@ namespace OpenXmlPowerTools
                                         var openXmlPartInNewDocument = part;
                                         return gc.Select(gce =>
                                         {
-                                            Package packageOfSourceContent = openXmlPartOfInsertedContent.OpenXmlPackage.Package;
-                                            Package packageOfNewContent = openXmlPartInNewDocument.OpenXmlPackage.Package;
+                                            Package packageOfSourceContent = OpenXmlPackageHelper.GetPackage(openXmlPartOfInsertedContent.OpenXmlPackage);
+                                             Package packageOfNewContent = OpenXmlPackageHelper.GetPackage(openXmlPartInNewDocument.OpenXmlPackage);
                                             PackagePart partInDeletedDocument = packageOfSourceContent.GetPart(part.Uri);
                                             PackagePart partInNewDocument = packageOfNewContent.GetPart(part.Uri);
                                             return MoveRelatedPartsToDestination(partInDeletedDocument, partInNewDocument, newDrawing);
