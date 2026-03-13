@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using OpenXmlPowerTools;
+using Nedev.ImageSharp;
 
 namespace OpenXmlPowerTools
 {
@@ -30,13 +31,13 @@ namespace OpenXmlPowerTools
                 {
                     RevisedDocument = new WmlDocument("../../RevisedByBob.docx"),
                     Revisor = "Bob",
-                    Color = Color.LightBlue,
+                    Color = Nedev.ImageSharp.Color.Parse("LightBlue"),
                 },
                 new WmlRevisedDocumentInfo()
                 {
                     RevisedDocument = new WmlDocument("../../RevisedByMary.docx"),
                     Revisor = "Mary",
-                    Color = Color.LightYellow,
+                    Color = Nedev.ImageSharp.Color.Parse("LightYellow"),
                 },
             };
             WmlComparerSettings settings = new WmlComparerSettings();

@@ -1,9 +1,8 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
@@ -12,6 +11,10 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using System.Globalization;
+using Nedev.Fonts;
+using Nedev.ImageSharp;
+using Nedev.ImageSharp.PixelFormats;
+using Nedev.ImageSharp.Drawing;
 
 namespace OpenXmlPowerTools
 {
@@ -25,11 +28,11 @@ namespace OpenXmlPowerTools
 
     public class MetricsGetter
     {
-        private static Lazy<Graphics> Graphics { get; } = new Lazy<Graphics>(() =>
+        private static readonly FontCollection FontCollection = new FontCollection();
+
+        static MetricsGetter()
         {
-            Image image = new Bitmap(1, 1);
-            return System.Drawing.Graphics.FromImage(image);
-        });
+        }
 
         public static XElement GetMetrics(string fileName, MetricsGetterSettings settings)
         {
@@ -108,16 +111,18 @@ namespace OpenXmlPowerTools
             return metrics;
         }
 
-        private static int _getTextWidth(FontFamily ff, FontStyle fs, decimal sz, string text)
+        private static int _getTextWidth(string ff, Nedev.Fonts.FontStyle fs, decimal sz, string text)
         {
             try
             {
-                using (var f = new Font(ff, (float)sz / 2f, fs))
-                {
-                    var proposedSize = new Size(int.MaxValue, int.MaxValue);
-                    var sf = Graphics.Value.MeasureString(text, f, proposedSize);
-                    return (int) sf.Width;
-                }
+                var fontFamily = SystemFonts.Get(ff);
+                if (fontFamily == default)
+                    return 0;
+                var style = fs == Nedev.Fonts.FontStyle.Bold ? Nedev.Fonts.FontStyle.Bold : Nedev.Fonts.FontStyle.Regular;
+                var sixFont = new Nedev.Fonts.Font(fontFamily, (float)sz / 2f, style);
+                var textOptions = new Nedev.Fonts.TextOptions(sixFont);
+                var bounds = TextMeasurer.MeasureBounds(text, textOptions);
+                return (int)(bounds.Right - bounds.Left);
             }
             catch
             {
@@ -125,7 +130,7 @@ namespace OpenXmlPowerTools
             }
         }
 
-        public static int GetTextWidth(FontFamily ff, FontStyle fs, decimal sz, string text)
+        public static int GetTextWidth(string ff, Nedev.Fonts.FontStyle fs, decimal sz, string text)
         {
             try
             {
@@ -135,12 +140,12 @@ namespace OpenXmlPowerTools
             {
                 try
                 {
-                    const FontStyle fs2 = FontStyle.Regular;
+                    const Nedev.Fonts.FontStyle fs2 = Nedev.Fonts.FontStyle.Regular;
                     return _getTextWidth(ff, fs2, sz, text);
                 }
                 catch (ArgumentException)
                 {
-                    const FontStyle fs2 = FontStyle.Bold;
+                    const Nedev.Fonts.FontStyle fs2 = Nedev.Fonts.FontStyle.Bold;
                     try
                     {
                         return _getTextWidth(ff, fs2, sz, text);
@@ -149,7 +154,7 @@ namespace OpenXmlPowerTools
                     {
                         // if both regular and bold fail, then get metrics for Times New Roman
                         // use the original FontStyle (in fs)
-                        var ff2 = new FontFamily("Times New Roman");
+                        var ff2 = "Times New Roman";
                         return _getTextWidth(ff2, fs, sz, text);
                     }
                 }
@@ -159,6 +164,14 @@ namespace OpenXmlPowerTools
                 // This happened on Azure but interestingly enough not while testing locally.
                 return 0;
             }
+        }
+
+        public static int GetTextWidth(System.Drawing.FontFamily ff, System.Drawing.FontStyle fs, decimal sz, string text)
+        {
+            var sixLaborsStyle = fs.HasFlag(System.Drawing.FontStyle.Bold) 
+                ? Nedev.Fonts.FontStyle.Bold 
+                : Nedev.Fonts.FontStyle.Regular;
+            return GetTextWidth(ff.Name, sixLaborsStyle, sz, text);
         }
 
         private static Uri FixUri(string brokenUri)

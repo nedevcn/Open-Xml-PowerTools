@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -15,6 +15,8 @@ using OpenXmlPowerTools;
 using System.Text;
 using DocumentFormat.OpenXml;
 using System.Drawing.Imaging;
+using Nedev.ImageSharp;
+using Nedev.ImageSharp.PixelFormats;
 
 namespace OpenXmlPowerTools
 {
@@ -53,7 +55,8 @@ namespace OpenXmlPowerTools
 
                     if (!string.IsNullOrEmpty(foreColor))
                     {
-                        int colorValue = ColorParser.FromName(foreColor).ToArgb();
+                        var colorRgba = ColorParser.FromName(foreColor).ToPixel<Rgba32>();
+                        int colorValue = (colorRgba.A << 24) | (colorRgba.R << 16) | (colorRgba.G << 8) | colorRgba.B;
                         if (colorValue == 0)
                             throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
 
@@ -66,7 +69,8 @@ namespace OpenXmlPowerTools
 
                     if (!string.IsNullOrEmpty(backColor))
                     {
-                        int colorShade = ColorParser.FromName(backColor).ToArgb();
+                        var colorShadeRgba = ColorParser.FromName(backColor).ToPixel<Rgba32>();
+                        int colorShade = (colorShadeRgba.A << 24) | (colorShadeRgba.R << 16) | (colorShadeRgba.G << 8) | colorShadeRgba.B;
                         if (colorShade == 0)
                             throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
 

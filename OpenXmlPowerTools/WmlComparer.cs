@@ -14,7 +14,8 @@ using System.IO.Packaging;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using System.Drawing;
+using Nedev.ImageSharp;
+using Nedev.ImageSharp.PixelFormats;
 using System.Security.Cryptography;
 using OpenXmlPowerTools;
 
@@ -628,7 +629,8 @@ namespace OpenXmlPowerTools
                             delta.SaveAs(deltaFi.FullName);
                         }
 
-                        var colorRgb = revisedDocumentInfo.Color.ToArgb();
+                        var rgba = revisedDocumentInfo.Color.ToPixel<Rgba32>();
+                        var colorRgb = BitConverter.ToInt32(new[] { rgba.B, rgba.G, rgba.R, rgba.A }, 0);
                         var colorString = colorRgb.ToString("X");
                         if (colorString.Length == 8)
                             colorString = colorString.Substring(2);
@@ -1139,7 +1141,8 @@ namespace OpenXmlPowerTools
                         new XElement(W.bCs)),
                     new XElement(W.t, revisor)));
 
-            var colorRgb = groupedCi.First().Color.ToArgb();
+            var rgba2 = groupedCi.First().Color.ToPixel<Rgba32>();
+            var colorRgb = BitConverter.ToInt32(new[] { rgba2.B, rgba2.G, rgba2.R, rgba2.A }, 0);
             var colorString = colorRgb.ToString("X");
             if (colorString.Length == 8)
                 colorString = colorString.Substring(2);

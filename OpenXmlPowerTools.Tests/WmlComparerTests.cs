@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -15,6 +15,7 @@ using DocumentFormat.OpenXml.Validation;
 using OpenXmlPowerTools;
 using Xunit;
 using System.Diagnostics;
+using Nedev.ImageSharp;
 
 /****************************************************************************************************************/
 // Large tests have been commented out below.  If and when there is an effort to improve performance for WmlComparer,
@@ -409,7 +410,7 @@ namespace OxPt
                 new WmlRevisedDocumentInfo()
                 {
                     RevisedDocument = source2Wml,
-                    Color = Color.LightBlue,
+                    Color = Nedev.ImageSharp.Color.Parse("LightBlue"),
                     Revisor = "Revised by Eric White",
                 }
             };

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 /***************************************************************************
@@ -17,11 +17,12 @@ Resource Center and Documentation: http://openxmldeveloper.org/wiki/w/wiki/power
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Nedev.ImageSharp;
+using Nedev.ImageSharp.PixelFormats;
 
 namespace OpenXmlPowerTools.HtmlToWml.CSS
 {
@@ -844,7 +845,7 @@ namespace OpenXmlPowerTools.HtmlToWml.CSS
             int r = ConvertFromHex(hex.Substring(0, 2));
             int g = ConvertFromHex(hex.Substring(2, 2));
             int b = ConvertFromHex(hex.Substring(4));
-            return Color.FromArgb(r, g, b);
+            return Color.FromRgb((byte)r, (byte)g, (byte)b);
         }
 
         private int ConvertFromHex(string input)
@@ -1620,7 +1621,7 @@ namespace OpenXmlPowerTools.HtmlToWml.CSS
                                 break;
                         }
                     }
-                    return Color.FromArgb(fr, fg, fb);
+                    return Color.FromRgb((byte)fr, (byte)fg, (byte)fb);
                 }
                 else if ((m_function.Name.ToLower().Equals("hsl") && m_function.Expression.Terms.Count == 3)
                   || (m_function.Name.Equals("hsla") && m_function.Expression.Terms.Count == 4)
@@ -1663,7 +1664,7 @@ namespace OpenXmlPowerTools.HtmlToWml.CSS
             int r = ConvertFromHex(hex.Substring(0, 2));
             int g = ConvertFromHex(hex.Substring(2, 2));
             int b = ConvertFromHex(hex.Substring(4));
-            return Color.FromArgb(r, g, b);
+            return Color.FromRgb((byte)r, (byte)g, (byte)b);
         }
         private int ConvertFromHex(string input)
         {
@@ -1877,9 +1878,10 @@ namespace OpenXmlPowerTools.HtmlToWml.CSS
         private void ConvertFromRGB(Color color)
         {
             double min; double max; double delta;
-            double r = (double)color.R / 255.0d;
-            double g = (double)color.G / 255.0d;
-            double b = (double)color.B / 255.0d;
+            var rgba = color.ToPixel<Rgba32>();
+            double r = (double)rgba.R / 255.0d;
+            double g = (double)rgba.G / 255.0d;
+            double b = (double)rgba.B / 255.0d;
             double h; double s; double v;
 
             min = Math.Min(Math.Min(r, g), b);
@@ -1989,7 +1991,7 @@ namespace OpenXmlPowerTools.HtmlToWml.CSS
                         break;
                 }
             }
-            return Color.FromArgb((int)(r * 255.0d), (int)(g * 255.0d), (int)(b * 255.0d));
+            return Color.FromRgba((byte)(r * 255.0d), (byte)(g * 255.0d), (byte)(b * 255.0d), 255);
         }
 
         public static bool operator !=(HueSatVal left, HueSatVal right)
