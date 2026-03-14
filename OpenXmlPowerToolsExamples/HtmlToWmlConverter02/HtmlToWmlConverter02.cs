@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
-using OpenXmlPowerTools.HtmlToWml;
+using Nedev.OpenXmlPowerTools;
+using Nedev.OpenXmlPowerTools.HtmlToWml;
 using Nedev.ImageSharp.Formats.Png;
 using Nedev.ImageSharp.Formats.Gif;
 using Nedev.ImageSharp.Formats.Bmp;
 using Nedev.ImageSharp.Formats.Jpeg;
 
-namespace OpenXmlPowerTools
+namespace Nedev.OpenXmlPowerTools
 {
     class Program
     {

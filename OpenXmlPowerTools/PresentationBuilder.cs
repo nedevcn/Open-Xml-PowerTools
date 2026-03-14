@@ -10,7 +10,7 @@ using System.Xml.Linq;
 using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace OpenXmlPowerTools
+namespace Nedev.OpenXmlPowerTools
 {
     public class SlideSource
     {

@@ -4,7 +4,7 @@
 using System;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace OpenXmlPowerTools
+namespace Nedev.OpenXmlPowerTools
 {
     /// <summary>
     /// Provides an elegant way of wrapping a set of invocations of the strongly typed 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 /***************************************************************************
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
+using Nedev.OpenXmlPowerTools;
 using Nedev.ImageSharp.Formats.Png;
 using Nedev.ImageSharp.Formats.Gif;
 using Nedev.ImageSharp.Formats.Bmp;

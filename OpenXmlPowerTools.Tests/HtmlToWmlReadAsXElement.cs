@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using OpenXmlPowerTools;
+using Nedev.OpenXmlPowerTools;
 
 /*******************************************************************************************
  * HtmlToWmlConverter expects the HTML to be passed as an XElement, i.e. as XML.  While the HTML test files that
@@ -34,7 +34,7 @@ using OpenXmlPowerTools;
 using HtmlAgilityPack;
 #endif
 
-namespace OpenXmlPowerTools
+namespace Nedev.OpenXmlPowerTools
 {
     public class HtmlToWmlReadAsXElement
     {

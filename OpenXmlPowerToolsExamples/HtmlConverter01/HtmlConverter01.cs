@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
+using Nedev.OpenXmlPowerTools;
 using Nedev.ImageSharp.Formats.Png;
 using Nedev.ImageSharp.Formats.Gif;
 using Nedev.ImageSharp.Formats.Bmp;

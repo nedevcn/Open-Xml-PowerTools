@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+/***************************************************************************
 
 Copyright (c) Microsoft Corporation 2012-2015.
 
@@ -29,7 +29,7 @@ using System.Xml.Linq;
 using HtmlAgilityPack;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
-using OpenXmlPowerTools;
+using Nedev.OpenXmlPowerTools;
 using Xunit;
 
 namespace OxPt

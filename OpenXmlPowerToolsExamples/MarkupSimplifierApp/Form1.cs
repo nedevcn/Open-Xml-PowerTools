@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
+using Nedev.OpenXmlPowerTools;
 
 namespace MarkupSimplifierApp
 {
@@ -48,7 +48,7 @@ namespace MarkupSimplifierApp
                         RemoveWebHidden = cbRemoveWebHidden.Checked,
                         NormalizeXml = cbNormalize.Checked,
                     };
-                    OpenXmlPowerTools.MarkupSimplifier.SimplifyMarkup(doc, settings);
+                    Nedev.OpenXmlPowerTools.MarkupSimplifier.SimplifyMarkup(doc, settings);
                 }
             }
         }

@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+/***************************************************************************
 
 Copyright (c) Microsoft Corporation 2012-2015.
 
@@ -24,7 +24,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
+using Nedev.OpenXmlPowerTools;
 using Word = Microsoft.Office.Interop.Word;
 
 namespace OxPt

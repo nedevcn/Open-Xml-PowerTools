@@ -16,7 +16,7 @@ using Nedev.ImageSharp;
 using Nedev.ImageSharp.PixelFormats;
 using Nedev.ImageSharp.Drawing;
 
-namespace OpenXmlPowerTools
+namespace Nedev.OpenXmlPowerTools
 {
     public class MetricsGetterSettings
     {

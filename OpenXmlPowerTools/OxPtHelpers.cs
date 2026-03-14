@@ -10,7 +10,7 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Validation;
-using OpenXmlPowerTools;
+using Nedev.OpenXmlPowerTools;
 using System.Text;
 using DocumentFormat.OpenXml;
 using Nedev.ImageSharp;
@@ -20,7 +20,7 @@ using Nedev.ImageSharp.Formats.Gif;
 using Nedev.ImageSharp.Formats.Bmp;
 using Nedev.ImageSharp.Formats.Jpeg;
 
-namespace OpenXmlPowerTools
+namespace Nedev.OpenXmlPowerTools
 {
     public static class AddDocxTextHelper
     {

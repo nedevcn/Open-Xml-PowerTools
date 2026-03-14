@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -7,9 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using OpenXmlPowerTools;
-using OpenXmlPowerTools.HtmlToWml;
-using OpenXmlPowerTools.HtmlToWml.CSS;
+using Nedev.OpenXmlPowerTools;
+using Nedev.OpenXmlPowerTools.HtmlToWml;
+using Nedev.OpenXmlPowerTools.HtmlToWml.CSS;
 using System.Globalization;
 
 #if false
@@ -115,7 +115,7 @@ Following is my new theory of the correct algorithm:
       return value
 #endif
 
-namespace OpenXmlPowerTools.HtmlToWml
+namespace Nedev.OpenXmlPowerTools.HtmlToWml
 {
     class CssApplier
     {

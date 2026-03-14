@@ -12,7 +12,7 @@ using DocumentFormat.OpenXml.Packaging;
 using System.IO;
 using Nedev.Fonts;
 
-namespace OpenXmlPowerTools
+namespace Nedev.OpenXmlPowerTools
 {
     public partial class SmlDocument
     {

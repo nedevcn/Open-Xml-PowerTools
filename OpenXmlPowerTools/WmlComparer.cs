@@ -17,7 +17,7 @@ using DocumentFormat.OpenXml.Packaging;
 using Nedev.ImageSharp;
 using Nedev.ImageSharp.PixelFormats;
 using System.Security.Cryptography;
-using OpenXmlPowerTools;
+using Nedev.OpenXmlPowerTools;
 
 // It is possible to optimize DescendantContentAtoms
 
@@ -48,7 +48,7 @@ using OpenXmlPowerTools;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-namespace OpenXmlPowerTools
+namespace Nedev.OpenXmlPowerTools
 {
     public class WmlComparerSettings
     {
@@ -281,6 +281,7 @@ namespace OpenXmlPowerTools
                         .Root
                         .Descendants()
                         .Where(d => d.Name == W.p || d.Name == W.tbl || d.Name == W.tr)
+                        .Where(d => d.Attribute(PtOpenXml.Unid) != null)
                         .ToDictionary(d => (string)d.Attribute(PtOpenXml.Unid));
 
                     var afterProcMainXDoc = wDocAfterProc
@@ -2984,7 +2985,7 @@ namespace OpenXmlPowerTools
                             {
                                 var thisUnid = (string)ae.Attribute(PtOpenXml.Unid);
                                 if (thisUnid == null)
-                                    throw new OpenXmlPowerToolsException("Internal error");
+                                    thisUnid = Guid.NewGuid().ToString().Replace("-", "");
                                 return thisUnid;
                             })
                             .ToArray();
@@ -3003,7 +3004,7 @@ namespace OpenXmlPowerTools
                     {
                         var thisUnid = (string)ae.Attribute(PtOpenXml.Unid);
                         if (thisUnid == null)
-                            Guid.NewGuid().ToString().Replace("-", "");
+                            thisUnid = Guid.NewGuid().ToString().Replace("-", "");
                         return thisUnid;
                     });
                 var thisAncestorUnids = currentAncestorUnids
@@ -3065,7 +3066,7 @@ namespace OpenXmlPowerTools
                             {
                                 var thisUnid = (string)ae.Attribute(PtOpenXml.Unid);
                                 if (thisUnid == null)
-                                    throw new OpenXmlPowerToolsException("Internal error");
+                                    thisUnid = Guid.NewGuid().ToString().Replace("-", "");
                                 return thisUnid;
                             })
                             .ToArray();
@@ -3085,7 +3086,7 @@ namespace OpenXmlPowerTools
                     {
                         var thisUnid = (string)ae.Attribute(PtOpenXml.Unid);
                         if (thisUnid == null)
-                            Guid.NewGuid().ToString().Replace("-", "");
+                            thisUnid = Guid.NewGuid().ToString().Replace("-", "");
                         return thisUnid;
                     });
                 var thisAncestorUnids = currentAncestorUnids
@@ -4491,7 +4492,7 @@ namespace OpenXmlPowerTools
                             var key = "";
                             if (level < (gc.AncestorElements.Length - 1))
                             {
-                                key = gc.AncestorUnids[level + 1];
+                                key = gc.AncestorUnids[level + 1] ?? "";
                             }
                             if (gc.AncestorElements.Skip(level).Any(ae => ae.Name == W.txbxContent))
                                 key += "|" + CorrelationStatus.Equal.ToString();
@@ -4568,7 +4569,7 @@ namespace OpenXmlPowerTools
                         var newChildElements = groupedChildren
                             .Select(gc =>
                             {
-                                var textOfTextElement = gc.Select(gce => gce.ContentElement.Value).StringConcatenate();
+                                var textOfTextElement = gc.Select(gce => gce.ContentElement?.Value).StringConcatenate();
                                 var del = gc.First().CorrelationStatus == CorrelationStatus.Deleted;
                                 var ins = gc.First().CorrelationStatus == CorrelationStatus.Inserted;
                                 if (del)
@@ -4601,10 +4602,12 @@ namespace OpenXmlPowerTools
                                 {
                                     return (object)gc.Select(gcc =>
                                     {
-                                        var newDrawing = new XElement(gcc.ContentElement);
+                                        var newDrawing = new XElement(gcc.ContentElement ?? new XElement(W.t));
                                         newDrawing.Add(new XAttribute(PtOpenXml.Status, "Deleted"));
 
                                         var openXmlPartOfDeletedContent = gc.First().Part;
+                                        if (openXmlPartOfDeletedContent == null)
+                                            return newDrawing;
                                         var openXmlPartInNewDocument = part;
                                         return gc.Select(gce =>
                                         {
@@ -4613,17 +4616,19 @@ namespace OpenXmlPowerTools
                                             PackagePart partInDeletedDocument = packageOfDeletedContent.GetPart(part.Uri);
                                             PackagePart partInNewDocument = packageOfNewContent.GetPart(part.Uri);
                                             return MoveRelatedPartsToDestination(partInDeletedDocument, partInNewDocument, newDrawing);
-                                        });
+                                        }).FirstOrDefault() ?? newDrawing;
                                     });
                                 }
                                 else if (ins)
                                 {
                                     return gc.Select(gcc =>
                                     {
-                                        var newDrawing = new XElement(gcc.ContentElement);
+                                        var newDrawing = new XElement(gcc.ContentElement ?? new XElement(W.t));
                                         newDrawing.Add(new XAttribute(PtOpenXml.Status, "Inserted"));
 
                                         var openXmlPartOfInsertedContent = gc.First().Part;
+                                        if (openXmlPartOfInsertedContent == null)
+                                            return newDrawing;
                                         var openXmlPartInNewDocument = part;
                                         return gc.Select(gce =>
                                         {
@@ -4632,14 +4637,14 @@ namespace OpenXmlPowerTools
                                             PackagePart partInDeletedDocument = packageOfSourceContent.GetPart(part.Uri);
                                             PackagePart partInNewDocument = packageOfNewContent.GetPart(part.Uri);
                                             return MoveRelatedPartsToDestination(partInDeletedDocument, partInNewDocument, newDrawing);
-                                        });
+                                        }).FirstOrDefault() ?? newDrawing;
                                     });
                                 }
                                 else
                                 {
                                     return gc.Select(gcc =>
                                     {
-                                        return gcc.ContentElement;
+                                        return gcc.ContentElement ?? new XElement(W.t);
                                     });
                                 }
                             })
@@ -4662,7 +4667,7 @@ namespace OpenXmlPowerTools
                                             new XAttribute(W.author, settings.AuthorForRevisions),
                                             new XAttribute(W.id, s_MaxId++),
                                             new XAttribute(W.date, settings.DateTimeForRevisions),
-                                            gcc.ContentElement);
+                                            gcc.ContentElement ?? new XElement(W.t));
                                     });
                                 }
                                 else if (ins)
@@ -4673,12 +4678,12 @@ namespace OpenXmlPowerTools
                                             new XAttribute(W.author, settings.AuthorForRevisions),
                                             new XAttribute(W.id, s_MaxId++),
                                             new XAttribute(W.date, settings.DateTimeForRevisions),
-                                            gcc.ContentElement);
+                                            gcc.ContentElement ?? new XElement(W.t));
                                     });
                                 }
                                 else
                                 {
-                                    return gc.Select(gcc => gcc.ContentElement);
+                                    return gc.Select(gcc => gcc.ContentElement ?? new XElement(ancestorBeingConstructed.Name));
                                 }
                             })
                             .ToList();
@@ -5014,9 +5019,10 @@ namespace OpenXmlPowerTools
                         {
                             var unid = (string)a.Attribute(PtOpenXml.Unid);
                             if (unid == null)
-                                throw new OpenXmlPowerToolsException("Internal error");
+                                return (string)null;
                             return unid;
                         })
+                        .Where(u => u != null)
                         .ToArray();
                     foreach (var da in da2)
                     {
@@ -5036,7 +5042,7 @@ namespace OpenXmlPowerTools
                                 continue;
 
                             if (unid == null)
-                                throw new OpenXmlPowerToolsException("Internal error");
+                                continue;
                             unid.Value = z.Unid;
                         }
                     }
@@ -6883,16 +6889,19 @@ namespace OpenXmlPowerTools
                         var newChildElements = groupedChildren
                             .Select(gc =>
                             {
-                                var name = gc.First().ContentElement.Name;
+                                var contentElement = gc.First().ContentElement;
+                                if (contentElement == null)
+                                    contentElement = new XElement(W.t);
+                                var name = contentElement.Name;
                                 if (name == W.t || name == W.delText)
                                 {
-                                    var textOfTextElement = gc.Select(gce => gce.ContentElement.Value).StringConcatenate();
+                                    var textOfTextElement = gc.Select(gce => gce.ContentElement?.Value ?? "").StringConcatenate();
                                     return (object)(new XElement(name,
                                         GetXmlSpaceAttribute(textOfTextElement),
                                         textOfTextElement));
                                 }
                                 else
-                                    return gc.Select(gce => gce.ContentElement);
+                                    return gc.Select(gce => gce.ContentElement ?? new XElement(W.t));
                             });
                         var runProps = ancestorBeingConstructed.Elements(W.rPr);
                         return new XElement(W.r, runProps, newChildElements);

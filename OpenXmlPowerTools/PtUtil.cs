@@ -16,7 +16,7 @@ using System.Xml.Linq;
 using System.Xml.Schema;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace OpenXmlPowerTools
+namespace Nedev.OpenXmlPowerTools
 {
     public static class PtUtils
     {

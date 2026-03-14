@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.IO;
@@ -10,7 +10,7 @@ using Xunit;
 
 #if !ELIDE_XUNIT_TESTS
 
-namespace OpenXmlPowerTools.Tests
+namespace Nedev.OpenXmlPowerTools.Tests
 {
     public class MarkupSimplifierTests
     {

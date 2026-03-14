@@ -24,7 +24,7 @@ using System.Text;
 using Nedev.ImageSharp;
 using Nedev.ImageSharp.PixelFormats;
 
-namespace OpenXmlPowerTools.HtmlToWml.CSS
+namespace Nedev.OpenXmlPowerTools.HtmlToWml.CSS
 {
     public class CssAttribute
     {

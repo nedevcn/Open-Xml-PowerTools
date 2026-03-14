@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+/***************************************************************************
 
 Copyright (c) Microsoft Corporation 2012-2015.
 
@@ -28,7 +28,7 @@ using System.Xml;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
-using OpenXmlPowerTools;
+using Nedev.OpenXmlPowerTools;
 using Xunit;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;

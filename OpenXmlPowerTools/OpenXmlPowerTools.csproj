@@ -1,6 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
+    <PackageId>Nedev.OpenXmlPowerTools</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Nedev</Authors>
+    <Description>A cross-platform Open XML library for manipulating Office documents (Word, Excel, PowerPoint). This is a fork of Open-Xml-PowerTools with System.Drawing.Common dependency replaced by Nedev.ImageSharp for true cross-platform support.</Description>
+    <PackageTags>openxml office word excel powerpoint document docx xlsx pptx</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/nedev/Open-Xml-PowerTools</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nedev/Open-Xml-PowerTools</RepositoryUrl>
+    <RootNamespace>Nedev.OpenXmlPowerTools</RootNamespace>
+    <AssemblyName>Nedev.OpenXmlPowerTools</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,5 +20,9 @@
     <PackageReference Include="Nedev.Fonts" Version="1.0.0" />
     <PackageReference Include="Nedev.ImageSharp.Drawing" Version="1.0.0" />
     <PackageReference Include="System.IO.Packaging" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>

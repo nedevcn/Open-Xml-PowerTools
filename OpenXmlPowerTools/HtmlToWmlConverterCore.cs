@@ -103,15 +103,15 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
-using OpenXmlPowerTools.HtmlToWml;
-using OpenXmlPowerTools.HtmlToWml.CSS;
+using Nedev.OpenXmlPowerTools;
+using Nedev.OpenXmlPowerTools.HtmlToWml;
+using Nedev.OpenXmlPowerTools.HtmlToWml.CSS;
 using System.Text.RegularExpressions;
 using Nedev.Fonts;
 using Nedev.ImageSharp;
 using Nedev.ImageSharp.Formats.Png;
 
-namespace OpenXmlPowerTools.HtmlToWml
+namespace Nedev.OpenXmlPowerTools.HtmlToWml
 {
     public class ElementToStyleMap
     {
