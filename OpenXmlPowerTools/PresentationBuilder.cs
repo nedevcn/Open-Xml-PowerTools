@@ -159,7 +159,7 @@ namespace Nedev.OpenXmlPowerTools
                         if (dbie.Message.Contains("{0}"))
                             throw new PresentationBuilderException(string.Format(dbie.Message, sourceNum));
                         else
-                            throw dbie;
+                            throw;
                     }
                 }
                 sourceNum++;
@@ -761,7 +761,7 @@ namespace Nedev.OpenXmlPowerTools
                 // part.  This is not necessary for parts such as the main document part, but this code won't malfunction
                 // in that case.
                 var tempPartIdPair5 = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (tempPartIdPair5 != null)
+                if (!string.IsNullOrEmpty(tempPartIdPair5.RelationshipId))
                     continue;
 
                 ExternalRelationship tempEr5 = newContentPart.ExternalRelationships.FirstOrDefault(er => er.Id == relId);
@@ -769,7 +769,7 @@ namespace Nedev.OpenXmlPowerTools
                     continue;
 
                 var oldPartIdPair = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (oldPartIdPair != null)
+                if (!string.IsNullOrEmpty(oldPartIdPair.RelationshipId))
                 {
                     OpenXmlPart oldPart = oldPartIdPair.OpenXmlPart;
                     OpenXmlPart newPart = null;
@@ -832,7 +832,7 @@ namespace Nedev.OpenXmlPowerTools
                     continue;
 
                 var tempPartIdPair6 = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (tempPartIdPair6 != null)
+                if (!string.IsNullOrEmpty(tempPartIdPair6.RelationshipId))
                     continue;
 
                 ExternalRelationship tempEr6 = newContentPart.ExternalRelationships.FirstOrDefault(er => er.Id == relId);
@@ -840,7 +840,7 @@ namespace Nedev.OpenXmlPowerTools
                     continue;
 
                 var oldPartIdPair2 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (oldPartIdPair2 != null)
+                if (!string.IsNullOrEmpty(oldPartIdPair2.RelationshipId))
                 {
                     ChartPart oldPart = oldPartIdPair2.OpenXmlPart as ChartPart;
                     if (oldPart != null)
@@ -863,7 +863,7 @@ namespace Nedev.OpenXmlPowerTools
                     continue;
 
                 var tempPartIdPair7 = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (tempPartIdPair7 != null)
+                if (!string.IsNullOrEmpty(tempPartIdPair7.RelationshipId))
                     continue;
 
                 ExternalRelationship tempEr7 = newContentPart.ExternalRelationships.FirstOrDefault(er => er.Id == relId);
@@ -871,7 +871,7 @@ namespace Nedev.OpenXmlPowerTools
                     continue;
 
                 var oldPartIdPair3 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (oldPartIdPair3 != null)
+                if (!string.IsNullOrEmpty(oldPartIdPair3.RelationshipId))
                 {
                     ChartDrawingPart oldPart = oldPartIdPair3.OpenXmlPart as ChartDrawingPart;
                     if (oldPart != null)
@@ -894,7 +894,7 @@ namespace Nedev.OpenXmlPowerTools
                     continue;
 
                 var tempPartIdPair8 = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (tempPartIdPair8 != null)
+                if (!string.IsNullOrEmpty(tempPartIdPair8.RelationshipId))
                     continue;
 
                 ExternalRelationship tempEr8 = newContentPart.ExternalRelationships.FirstOrDefault(er => er.Id == relId);
@@ -902,7 +902,7 @@ namespace Nedev.OpenXmlPowerTools
                     continue;
 
                 var oldPartIdPair4 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (oldPartIdPair4 != null)
+                if (!string.IsNullOrEmpty(oldPartIdPair4.RelationshipId))
                 {
                     UserDefinedTagsPart oldPart = oldPartIdPair4.OpenXmlPart as UserDefinedTagsPart;
                     if (oldPart != null)
@@ -923,11 +923,11 @@ namespace Nedev.OpenXmlPowerTools
                     continue;
 
                 var tempPartIdPair9 = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (tempPartIdPair9 != null)
+                if (!string.IsNullOrEmpty(tempPartIdPair9.RelationshipId))
                     continue;
 
                 var oldPartIdPair9 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (oldPartIdPair9 != null)
+                if (!string.IsNullOrEmpty(oldPartIdPair9.RelationshipId))
                 {
                     CustomXmlPart newPart = newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
                     newPart.FeedData(oldPartIdPair9.OpenXmlPart.GetStream());
@@ -1039,7 +1039,7 @@ namespace Nedev.OpenXmlPowerTools
                 string relId = dataReference.Attribute(R.id).Value;
 
                 var oldPartIdPair = oldChart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (oldPartIdPair != null)
+                if (!string.IsNullOrEmpty(oldPartIdPair.RelationshipId))
                 {
                     EmbeddedPackagePart oldPart = oldPartIdPair.OpenXmlPart as EmbeddedPackagePart;
                     if (oldPart != null)
@@ -1208,7 +1208,7 @@ namespace Nedev.OpenXmlPowerTools
             // part.  This is not necessary for parts such as the main document part, but this code won't malfunction
             // in that case.
             var partIdPair = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-            if (partIdPair != null)
+            if (!string.IsNullOrEmpty(partIdPair.RelationshipId))
                 return;
 
             ExternalRelationship extRel = newContentPart.ExternalRelationships.FirstOrDefault(r => r.Id == relId);
@@ -1216,7 +1216,7 @@ namespace Nedev.OpenXmlPowerTools
                 return;
 
             var oldPartIdPair = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-            if (oldPartIdPair != null)
+            if (!string.IsNullOrEmpty(oldPartIdPair.RelationshipId))
             {
                 ImagePart oldPart = oldPartIdPair.OpenXmlPart as ImagePart;
                 ImageData temp = ManageImageCopy(oldPart, newContentPart, images);
@@ -1475,7 +1475,7 @@ namespace Nedev.OpenXmlPowerTools
                 return;
 
             var tempPartIdPair = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-            if (tempPartIdPair != null)
+            if (!string.IsNullOrEmpty(tempPartIdPair.RelationshipId))
                 return;
 
             var tempEr = newContentPart.ExternalRelationships.FirstOrDefault(er => er.Id == relId);
@@ -1498,7 +1498,7 @@ namespace Nedev.OpenXmlPowerTools
                 return;
 
             var tempPartIdPair = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-            if (tempPartIdPair != null)
+            if (!string.IsNullOrEmpty(tempPartIdPair.RelationshipId))
                 return;
 
             var oldPart = oldContentPart.GetPartById(relId);
@@ -1533,7 +1533,7 @@ namespace Nedev.OpenXmlPowerTools
                 return;
 
             var tempPartIdPair = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-            if (tempPartIdPair != null)
+            if (!string.IsNullOrEmpty(tempPartIdPair.RelationshipId))
                 return;
 
             var oldPart = oldContentPart.GetPartById(relId);
@@ -1557,7 +1557,7 @@ namespace Nedev.OpenXmlPowerTools
                 // part.  This is not necessary for parts such as the main document part, but this code won't malfunction
                 // in that case.
                 var tempPartIdPair = newContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (tempPartIdPair != null)
+                if (!string.IsNullOrEmpty(tempPartIdPair.RelationshipId))
                     return;
 
                 var tempEr = newContentPart.ExternalRelationships.FirstOrDefault(er => er.Id == relId);

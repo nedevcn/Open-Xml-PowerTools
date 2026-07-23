@@ -3053,7 +3053,7 @@ namespace Nedev.OpenXmlPowerTools
             if (imageRid == null) return null;
 
             var pp3 = wordDoc.MainDocumentPart.Parts.FirstOrDefault(pp => pp.RelationshipId == imageRid);
-            if (pp3 == null) return null;
+            if (string.IsNullOrEmpty(pp3.RelationshipId)) return null;
 
             var imagePart = (ImagePart)pp3.OpenXmlPart;
             if (imagePart == null) return null;
@@ -3126,7 +3126,7 @@ namespace Nedev.OpenXmlPowerTools
             try
             {
                 var pp = wordDoc.MainDocumentPart.Parts.FirstOrDefault(pp2 => pp2.RelationshipId == imageRid);
-                if (pp == null) return null;
+                if (string.IsNullOrEmpty(pp.RelationshipId)) return null;
 
                 var imagePart = (ImagePart)pp.OpenXmlPart;
                 if (imagePart == null) return null;

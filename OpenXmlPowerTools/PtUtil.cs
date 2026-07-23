@@ -1427,7 +1427,7 @@ namespace Nedev.OpenXmlPowerTools
 
     public static class OpenXmlPackageHelper
     {
-        private static readonly System.Reflection.PropertyInfo? PackageProperty;
+        private static readonly System.Reflection.PropertyInfo PackageProperty;
 
         static OpenXmlPackageHelper()
         {
@@ -1435,7 +1435,7 @@ namespace Nedev.OpenXmlPowerTools
             PackageProperty = openXmlPackageType.GetProperty("Package", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
         }
 
-        public static Package? GetPackage(DocumentFormat.OpenXml.Packaging.OpenXmlPackage openXmlPackage)
+        public static Package GetPackage(DocumentFormat.OpenXml.Packaging.OpenXmlPackage openXmlPackage)
         {
             return PackageProperty?.GetValue(openXmlPackage) as Package;
         }

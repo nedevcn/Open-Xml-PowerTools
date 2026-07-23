@@ -12,6 +12,7 @@
     <RepositoryUrl>https://github.com/nedev/Open-Xml-PowerTools</RepositoryUrl>
     <RootNamespace>Nedev.OpenXmlPowerTools</RootNamespace>
     <AssemblyName>Nedev.OpenXmlPowerTools</AssemblyName>
+    <NoWarn>$(NoWarn);SA1633</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

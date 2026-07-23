@@ -453,7 +453,7 @@ namespace Nedev.OpenXmlPowerTools
         private static void ValidateImageExists(OpenXmlPart part, string relId, Dictionary<XName, int> metrics)
         {
             var imagePart = part.Parts.FirstOrDefault(ipp => ipp.RelationshipId == relId);
-            if (imagePart == null)
+            if (string.IsNullOrEmpty(imagePart.RelationshipId))
                 IncrementMetric(metrics, H.ReferenceToNullImage);
         }
 
